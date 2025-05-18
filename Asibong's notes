@@ -4,7 +4,6 @@
   "metadata": {
     "colab": {
       "provenance": [],
-      "authorship_tag": "ABX9TyNO9mPAhBoxjTNCRj6dDcF7",
       "include_colab_link": true
     },
     "kernelspec": {
@@ -30,12 +29,16 @@
       "cell_type": "code",
       "execution_count": null,
       "metadata": {
-        "id": "VFxHT-ZVvjbp"
+        "id": "Qe1yoHRJGhZy"
       },
       "outputs": [],
       "source": [
         "import pandas as pd\n",
-        "import numpy as np\n"
+        "import numpy as np\n",
+        "from sklearn.ensemble import RandomForestRegressor\n",
+        "from sklearn.model_selection import GridSearchCV, train_test_split\n",
+        "from sklearn.metrics import mean_squared_error, r2_score\n",
+        "import matplotlib.pyplot as plt\n"
       ]
     },
     {
@@ -46,18 +49,27 @@
       ],
       "metadata": {
         "colab": {
-          "base_uri": "https://localhost:8080/"
+          "base_uri": "https://localhost:8080/",
+          "height": 304
         },
-        "id": "bUVUjc7rvp49",
-        "outputId": "c17ac493-9921-422f-8fbc-8a2655071654"
+        "id": "ub5QdotQHYCX",
+        "outputId": "6d837b4a-1a73-41a4-91c0-6a2ae8c1d0c0"
       },
       "execution_count": null,
       "outputs": [
         {
-          "output_type": "stream",
-          "name": "stdout",
-          "text": [
-            "Drive already mounted at /content/drive; to attempt to forcibly remount, call drive.mount(\"/content/drive\", force_remount=True).\n"
+          "output_type": "error",
+          "ename": "MessageError",
+          "evalue": "Error: credential propagation was unsuccessful",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mMessageError\u001b[0m                              Traceback (most recent call last)",
+            "\u001b[0;32m<ipython-input-26-d5df0069828e>\u001b[0m in \u001b[0;36m<cell line: 2>\u001b[0;34m()\u001b[0m\n\u001b[1;32m      1\u001b[0m \u001b[0;32mfrom\u001b[0m \u001b[0mgoogle\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mcolab\u001b[0m \u001b[0;32mimport\u001b[0m \u001b[0mdrive\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 2\u001b[0;31m \u001b[0mdrive\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mmount\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m'/content/drive'\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
+            "\u001b[0;32m/usr/local/lib/python3.10/dist-packages/google/colab/drive.py\u001b[0m in \u001b[0;36mmount\u001b[0;34m(mountpoint, force_remount, timeout_ms, readonly)\u001b[0m\n\u001b[1;32m     98\u001b[0m \u001b[0;32mdef\u001b[0m \u001b[0mmount\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mmountpoint\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mforce_remount\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;32mFalse\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mtimeout_ms\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;36m120000\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mreadonly\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;32mFalse\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     99\u001b[0m   \u001b[0;34m\"\"\"Mount your Google Drive at the specified mountpoint path.\"\"\"\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 100\u001b[0;31m   return _mount(\n\u001b[0m\u001b[1;32m    101\u001b[0m       \u001b[0mmountpoint\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    102\u001b[0m       \u001b[0mforce_remount\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mforce_remount\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/usr/local/lib/python3.10/dist-packages/google/colab/drive.py\u001b[0m in \u001b[0;36m_mount\u001b[0;34m(mountpoint, force_remount, timeout_ms, ephemeral, readonly)\u001b[0m\n\u001b[1;32m    131\u001b[0m   )\n\u001b[1;32m    132\u001b[0m   \u001b[0;32mif\u001b[0m \u001b[0mephemeral\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 133\u001b[0;31m     _message.blocking_request(\n\u001b[0m\u001b[1;32m    134\u001b[0m         \u001b[0;34m'request_auth'\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mrequest\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;34m{\u001b[0m\u001b[0;34m'authType'\u001b[0m\u001b[0;34m:\u001b[0m \u001b[0;34m'dfs_ephemeral'\u001b[0m\u001b[0;34m}\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mtimeout_sec\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;32mNone\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    135\u001b[0m     )\n",
+            "\u001b[0;32m/usr/local/lib/python3.10/dist-packages/google/colab/_message.py\u001b[0m in \u001b[0;36mblocking_request\u001b[0;34m(request_type, request, timeout_sec, parent)\u001b[0m\n\u001b[1;32m    174\u001b[0m       \u001b[0mrequest_type\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mrequest\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mparent\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mparent\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mexpect_reply\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;32mTrue\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    175\u001b[0m   )\n\u001b[0;32m--> 176\u001b[0;31m   \u001b[0;32mreturn\u001b[0m \u001b[0mread_reply_from_input\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mrequest_id\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mtimeout_sec\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
+            "\u001b[0;32m/usr/local/lib/python3.10/dist-packages/google/colab/_message.py\u001b[0m in \u001b[0;36mread_reply_from_input\u001b[0;34m(message_id, timeout_sec)\u001b[0m\n\u001b[1;32m    101\u001b[0m     ):\n\u001b[1;32m    102\u001b[0m       \u001b[0;32mif\u001b[0m \u001b[0;34m'error'\u001b[0m \u001b[0;32min\u001b[0m \u001b[0mreply\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 103\u001b[0;31m         \u001b[0;32mraise\u001b[0m \u001b[0mMessageError\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mreply\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;34m'error'\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    104\u001b[0m       \u001b[0;32mreturn\u001b[0m \u001b[0mreply\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mget\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m'data'\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;32mNone\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    105\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;31mMessageError\u001b[0m: Error: credential propagation was unsuccessful"
           ]
         }
       ]
@@ -65,10 +77,10 @@
     {
       "cell_type": "code",
       "source": [
-        "df = pd.read_excel (\"/content/drive/MyDrive/DATASETS FOR ML LABS/ACTUAL ANN DATA ASY.xlsx\")"
+        "df = pd.read_csv(\"/content/happiness_updated 3.csv\")"
       ],
       "metadata": {
-        "id": "j4KkR0_Cvwfi"
+        "id": "OM3XMkffHkHC"
       },
       "execution_count": null,
       "outputs": []
@@ -76,12 +88,10 @@
     {
       "cell_type": "code",
       "source": [
-        "df.dropna(inplace=True)\n",
-        "df['Comments'] = df['Comments'].astype(str)\n",
-        "df['Comments'] = df['Comments'].str.lower()"
+        "df.head()"
       ],
       "metadata": {
-        "id": "tE4Toq5av8Xl"
+        "id": "CQzrL4uEIwgM"
       },
       "execution_count": null,
       "outputs": []
@@ -89,16 +99,10 @@
     {
       "cell_type": "code",
       "source": [
-        "from sklearn.feature_extraction.text import TfidfVectorizer\n",
-        "\n",
-        "# Initialize the TF-IDF vectorizer\n",
-        "vectorizer = TfidfVectorizer()\n",
-        "\n",
-        "# Fit and transform the text data\n",
-        "X = vectorizer.fit_transform(df['Comments'])"
+        "df = df.drop('Country', axis=1)"
       ],
       "metadata": {
-        "id": "2bGP8OxXwG5G"
+        "id": "2ED0x1JlKafw"
       },
       "execution_count": null,
       "outputs": []
@@ -106,10 +110,10 @@
     {
       "cell_type": "code",
       "source": [
-        "y = df['Labels']"
+        "df.head()"
       ],
       "metadata": {
-        "id": "wd1kS-Y7wMAS"
+        "id": "a0M7eD5WUCW9"
       },
       "execution_count": null,
       "outputs": []
@@ -117,12 +121,11 @@
     {
       "cell_type": "code",
       "source": [
-        "import nltk\n",
-        "from nltk.corpus import stopwords\n",
-        "from nltk.tokenize import word_tokenize"
+        "#X = df.iloc[:, :8].values\n",
+        "#Y = df.iloc[:, 8].values.reshape(-1,1)"
       ],
       "metadata": {
-        "id": "cwa4SluUwQXt"
+        "id": "DTf2w9zMKl_V"
       },
       "execution_count": null,
       "outputs": []
@@ -130,47 +133,11 @@
     {
       "cell_type": "code",
       "source": [
-        "nltk.download('stopwords')\n",
-        "nltk.download('punkt')"
+        "#print(np.shape(X))\n",
+        "#print(np.shape(Y))"
       ],
       "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/"
-        },
-        "id": "5w4_iMetwTmp",
-        "outputId": "e0749d20-f18c-4b59-fced-ffc687915530"
-      },
-      "execution_count": null,
-      "outputs": [
-        {
-          "output_type": "stream",
-          "name": "stderr",
-          "text": [
-            "[nltk_data] Downloading package stopwords to /root/nltk_data...\n",
-            "[nltk_data]   Package stopwords is already up-to-date!\n",
-            "[nltk_data] Downloading package punkt to /root/nltk_data...\n",
-            "[nltk_data]   Package punkt is already up-to-date!\n"
-          ]
-        },
-        {
-          "output_type": "execute_result",
-          "data": {
-            "text/plain": [
-              "True"
-            ]
-          },
-          "metadata": {},
-          "execution_count": 40
-        }
-      ]
-    },
-    {
-      "cell_type": "code",
-      "source": [
-        "x = df['Comments']"
-      ],
-      "metadata": {
-        "id": "NiN_O-qEwW90"
+        "id": "bYIXVSiZKra6"
       },
       "execution_count": null,
       "outputs": []
@@ -178,13 +145,10 @@
     {
       "cell_type": "code",
       "source": [
-        "word_tokens = word_tokenize('Comments')\n",
-        "stop_words = set(stopwords.words('english'))\n",
-        "filtered_Comments = [word for word in word_tokens if word.lower() not in stop_words]\n",
-        "filtered_Comments = ' '.join(filtered_Comments)"
+        "#df = pd.get_dummies(df, drop_first=True)"
       ],
       "metadata": {
-        "id": "NoTfcTi_wZ9t"
+        "id": "bfrVKi7iKwSF"
       },
       "execution_count": null,
       "outputs": []
@@ -192,11 +156,11 @@
     {
       "cell_type": "code",
       "source": [
-        "# Tokenize and remove stop words from each row of text data\n",
-        "df['Comments_without_stopwords'] = df['Comments'].apply(lambda x: ' '.join([word for word in word_tokenize(x) if word.lower() not in stop_words]))"
+        "X = df.drop(['Happiness_Score'], axis=1)\n",
+        "y = df['Happiness_Score']"
       ],
       "metadata": {
-        "id": "hXK_0dkowmlj"
+        "id": "FqUdOg1eK26g"
       },
       "execution_count": null,
       "outputs": []
@@ -204,73 +168,72 @@
     {
       "cell_type": "code",
       "source": [
-        "# Save cleaned DataFrame to an Excel file\n",
-        "df.to_excel('Comments_without_stopwords.xlsx', index=False)\n",
-        "\n",
-        "print(\"Comments_without_stopwords.\")"
+        "x = df['Log_GDP_per_capita']\n",
+        "y = df['Happiness_Score']"
       ],
       "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/"
-        },
-        "id": "VLTK3lXSwslh",
-        "outputId": "e6178eb5-0ab5-47e1-8286-356020390c1e"
+        "id": "18E1wtMFpRfh"
       },
       "execution_count": null,
-      "outputs": [
-        {
-          "output_type": "stream",
-          "name": "stdout",
-          "text": [
-            "Comments_without_stopwords.\n"
-          ]
-        }
-      ]
+      "outputs": []
     },
     {
       "cell_type": "code",
       "source": [
-        "import matplotlib.pyplot as plt\n",
-        "\n",
-        "# Visualize the distribution of labels\n",
-        "plt.hist(df['Labels'])\n",
-        "plt.xlabel('Labels')\n",
-        "plt.ylabel('Frequency')\n",
-        "plt.title('Distribution of Labels')\n",
+        "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)"
+      ],
+      "metadata": {
+        "id": "neEYz4dtLEyQ"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "X_train"
+      ],
+      "metadata": {
+        "id": "qOMDQxVTqHxz"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "rf_model = RandomForestRegressor(random_state=42)\n",
+        "rf_model.fit(X_train, y_train)"
+      ],
+      "metadata": {
+        "id": "AMNP1pu5UOAV"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "y_pred = rf_model.predict(X_test)\n",
+        "print('Test R2 score:', r2_score(y_test, y_pred))\n",
+        "print('Test MSE score:', mean_squared_error(y_test, y_pred))"
+      ],
+      "metadata": {
+        "id": "Ry-xL5m_USmu"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "importances = pd.Series(rf_model.feature_importances_, index=X.columns)\n",
+        "print(importances)\n",
+        "importances.plot(kind='barh')\n",
         "plt.show()"
       ],
       "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/",
-          "height": 472
-        },
-        "id": "7igfkTiOwwLR",
-        "outputId": "10bfd36c-da33-4d2f-b281-3186eb1f270f"
-      },
-      "execution_count": null,
-      "outputs": [
-        {
-          "output_type": "display_data",
-          "data": {
-            "text/plain": [
-              "<Figure size 640x480 with 1 Axes>"
-            ],
-            "image/png": "iVBORw0KGgoAAAANSUhEUgAAAjsAAAHHCAYAAABZbpmkAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjcuMSwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy/bCgiHAAAACXBIWXMAAA9hAAAPYQGoP6dpAAA000lEQVR4nO3dd3xUVf7/8feEVFIpJiEaEgSUvhYUIrioRIJEhRVWWBESFoHVRJoKYgGlRVERKYr6dSmKIljQHyXSRREBEdAFpEgXElAkoUhIOb8/eDDrEFAyTDLJ2dfz8biPh/fcM/d+7gmQt2fOnXEYY4wAAAAs5ePtAgAAAEoTYQcAAFiNsAMAAKxG2AEAAFYj7AAAAKsRdgAAgNUIOwAAwGqEHQAAYDXCDgAAsBphB6ignnnmGTkcjjK51i233KJbbrnFub98+XI5HA598MEHZXL91NRUxcfHl8m13HX8+HE98MADio6OlsPhUP/+/cvkuqmpqQoJCfHoOc/9eQMVHWEHKAemTp0qh8Ph3AIDAxUTE6OkpCSNHz9ex44d88h1Dhw4oGeeeUYbNmzwyPk8qTzXdjFGjx6tqVOn6sEHH9Tbb7+tbt26XbBvfHy87rzzzjKsDvjf5uvtAgD81/Dhw1WrVi3l5+crKytLy5cvV//+/TV27Fh9+umnatKkibPvU089pccff7xE5z9w4ICeffZZxcfH65prrrno1y1cuLBE13HHH9X25ptvqqioqNRruBRLly5V8+bNNWzYMG+XAuAchB2gHLnjjjvUtGlT5/6QIUO0dOlS3Xnnnbr77ru1ZcsWBQUFSZJ8fX3l61u6f4VPnjypypUry9/fv1Sv82f8/Py8ev2LcejQITVo0MDbZQA4D97GAsq52267TU8//bT27Nmjd955x9l+vjU7ixYtUsuWLRUREaGQkBBdffXVeuKJJySdWWdzww03SJJ69OjhfMts6tSpks6s02jUqJHWrVunv/71r6pcubLztRdaw1FYWKgnnnhC0dHRCg4O1t133619+/a59ImPj1dqamqx1/7+nH9W2/nW7Jw4cUKPPPKIYmNjFRAQoKuvvlovvviijDEu/RwOh9LT0zVnzhw1atRIAQEBatiwoTIzM88/4Oc4dOiQevbsqaioKAUGBuovf/mLpk2b5jx+dv3Srl27NG/ePGftu3fvvqjzX8gXX3yhv//976pZs6YCAgIUGxurAQMG6Lfffjtv/507dyopKUnBwcGKiYnR8OHDi41FUVGRxo0bp4YNGyowMFBRUVHq06ePfv311z+tZ8KECWrYsKEqV66sKlWqqGnTpnr33Xcv6R6BssLMDlABdOvWTU888YQWLlyoXr16nbfPpk2bdOedd6pJkyYaPny4AgICtGPHDq1cuVKSVL9+fQ0fPlxDhw5V7969dfPNN0uSbrrpJuc5fvnlF91xxx3q0qWL7r//fkVFRf1hXaNGjZLD4dDgwYN16NAhjRs3TomJidqwYYNzBupiXExtv2eM0d13361ly5apZ8+euuaaa/TZZ5/pscce008//aSXX37Zpf+XX36pjz76SA899JBCQ0M1fvx4dezYUXv37lW1atUuWNdvv/2mW265RTt27FB6erpq1aql2bNnKzU1VUePHlW/fv1Uv359vf322xowYICuuOIKPfLII5Kkyy677KLv/3xmz56tkydP6sEHH1S1atW0Zs0aTZgwQfv379fs2bNd+hYWFqpt27Zq3ry5xowZo8zMTA0bNkwFBQUaPny4s1+fPn00depU9ejRQ3379tWuXbs0ceJErV+/XitXrrzgDNqbb76pvn37qlOnTurXr59OnTql7777TqtXr9Z99913SfcJlAkDwOumTJliJJm1a9desE94eLi59tprnfvDhg0zv/8r/PLLLxtJ5vDhwxc8x9q1a40kM2XKlGLHWrVqZSSZyZMnn/dYq1atnPvLli0zkszll19ucnNzne2zZs0ykswrr7zibIuLizMpKSl/es4/qi0lJcXExcU59+fMmWMkmZEjR7r069Spk3E4HGbHjh3ONknG39/fpW3jxo1GkpkwYUKxa/3euHHjjCTzzjvvONtOnz5tEhISTEhIiMu9x8XFmeTk5D88X0n6njx5slhbRkaGcTgcZs+ePc62lJQUI8k8/PDDzraioiKTnJxs/P39nX8evvjiCyPJzJgxw+WcmZmZxdrP/dm0b9/eNGzY8KLuDSiPeBsLqCBCQkL+8KmsiIgISdInn3zi9mLegIAA9ejR46L7d+/eXaGhoc79Tp06qUaNGpo/f75b179Y8+fPV6VKldS3b1+X9kceeUTGGC1YsMClPTExUbVr13buN2nSRGFhYdq5c+efXic6Olr/+Mc/nG1+fn7q27evjh8/rs8//9wDd3N+v58ZO3HihH7++WfddNNNMsZo/fr1xfqnp6c7//vsW3enT5/W4sWLJZ2ZKQoPD9ftt9+un3/+2bldf/31CgkJ0bJlyy5YS0REhPbv36+1a9d68A6BskPYASqI48ePuwSLc3Xu3FktWrTQAw88oKioKHXp0kWzZs0qUfC5/PLLS7QYuW7dui77DodDderUueT1Kn9mz549iomJKTYe9evXdx7/vZo1axY7R5UqVf50rcqePXtUt25d+fi4/lN5oet40t69e5WamqqqVasqJCREl112mVq1aiVJysnJcenr4+OjK6+80qXtqquukiTnz2L79u3KyclRZGSkLrvsMpft+PHjOnTo0AVrGTx4sEJCQnTjjTeqbt26SktLc749ClQErNkBKoD9+/crJydHderUuWCfoKAgrVixQsuWLdO8efOUmZmp999/X7fddpsWLlyoSpUq/el1SrLO5mJd6IMPCwsLL6omT7jQdcw5C3jLi8LCQt1+++06cuSIBg8erHr16ik4OFg//fSTUlNT3Zq5KyoqUmRkpGbMmHHe43+0xqh+/fraunWr5s6dq8zMTH344Yd69dVXNXToUD377LMlrgUoa4QdoAJ4++23JUlJSUl/2M/Hx0etW7dW69atNXbsWI0ePVpPPvmkli1bpsTERI9/4vL27dtd9o0x2rFjh8vnAVWpUkVHjx4t9to9e/a4zEaUpLa4uDgtXrxYx44dc5nd+eGHH5zHPSEuLk7fffedioqKXGZ3PH2dc33//ffatm2bpk2bpu7duzvbFy1adN7+RUVF2rlzp3M2R5K2bdsmSc6n2GrXrq3FixerRYsWboXa4OBgde7cWZ07d9bp06d1zz33aNSoURoyZIgCAwNLfD6gLPE2FlDOLV26VCNGjFCtWrXUtWvXC/Y7cuRIsbazH86Xl5cn6cwvLEnnDR/umD59uss6og8++EAHDx7UHXfc4WyrXbu2vv76a50+fdrZNnfu3GKPqJektnbt2qmwsFATJ050aX/55ZflcDhcrn8p2rVrp6ysLL3//vvOtoKCAk2YMEEhISHOt5U87exM1O9nnowxeuWVVy74mt+PhTFGEydOlJ+fn1q3bi1Juvfee1VYWKgRI0YUe21BQcEfjvsvv/zisu/v768GDRrIGKP8/PyLuifAm5jZAcqRBQsW6IcfflBBQYGys7O1dOlSLVq0SHFxcfr000//8P+ghw8frhUrVig5OVlxcXE6dOiQXn31VV1xxRVq2bKlpDPBIyIiQpMnT1ZoaKiCg4PVrFkz1apVy616q1atqpYtW6pHjx7Kzs7WuHHjVKdOHZfH4x944AF98MEHatu2re699179+OOPeuedd1wWDJe0trvuuku33nqrnnzySe3evVt/+ctftHDhQn3yySfq379/sXO7q3fv3nr99deVmpqqdevWKT4+Xh988IFWrlypcePG/eEaqj+zY8cOjRw5slj7tddeqzZt2qh27dp69NFH9dNPPyksLEwffvjhBdcYBQYGKjMzUykpKWrWrJkWLFigefPm6YknnnC+PdWqVSv16dNHGRkZ2rBhg9q0aSM/Pz9t375ds2fP1iuvvKJOnTqd9/xt2rRRdHS0WrRooaioKG3ZskUTJ05UcnLyJY0BUGa89yAYgLPOPnp+dvP39zfR0dHm9ttvN6+88orLI85nnfvo+ZIlS0z79u1NTEyM8ff3NzExMeYf//iH2bZtm8vrPvnkE9OgQQPj6+vr8qh3q1atLvh48YUePX/vvffMkCFDTGRkpAkKCjLJyckuj0Wf9dJLL5nLL7/cBAQEmBYtWphvvvmm2Dn/qLZzHz03xphjx46ZAQMGmJiYGOPn52fq1q1rXnjhBVNUVOTST5JJS0srVtOFHok/V3Z2tunRo4epXr268ff3N40bNz7v4/ElffT89z/v3289e/Y0xhizefNmk5iYaEJCQkz16tVNr169nI/M//76KSkpJjg42Pz444+mTZs2pnLlyiYqKsoMGzbMFBYWFrv2G2+8Ya6//noTFBRkQkNDTePGjc2gQYPMgQMHnH3O/dm8/vrr5q9//aupVq2aCQgIMLVr1zaPPfaYycnJuaj7BbzNYUw5XaEHAADgAazZAQAAViPsAAAAqxF2AACA1Qg7AADAaoQdAABgNcIOAACwGh8qqDMftX7gwAGFhoZ6/OP0AQBA6TDG6NixY4qJiSn2hb2/R9iRdODAAcXGxnq7DAAA4IZ9+/bpiiuuuOBxwo7k/Ljzffv2KSwszMvVAACAi5Gbm6vY2Ng//doSwo7++23LYWFhhB0AACqYP1uCwgJlAABgNcIOAACwGmEHAABYjbADAACsRtgBAABWI+wAAACrEXYAAIDVCDsAAMBqhB0AAGA1wg4AALAaYQcAAFiNsAMAAKxG2AEAAFYj7AAAAKsRdgAAgNV8vV0AAAC4ePGPz/N2CSW2+7lkr16fmR0AAGA1wg4AALAaYQcAAFiNsAMAAKxG2AEAAFYj7AAAAKsRdgAAgNX4nJ1SxuchAADgXczsAAAAqxF2AACA1Qg7AADAaoQdAABgNcIOAACwGmEHAABYjbADAACsRtgBAABWI+wAAACrEXYAAIDVCDsAAMBqhB0AAGA1wg4AALAaYQcAAFiNsAMAAKxG2AEAAFYj7AAAAKsRdgAAgNUIOwAAwGqEHQAAYDXCDgAAsBphBwAAWI2wAwAArEbYAQAAViPsAAAAqxF2AACA1Qg7AADAaoQdAABgNcIOAACwGmEHAABYjbADAACsRtgBAABWI+wAAACrEXYAAIDVCDsAAMBqhB0AAGA1r4adwsJCPf3006pVq5aCgoJUu3ZtjRgxQsYYZx9jjIYOHaoaNWooKChIiYmJ2r59u8t5jhw5oq5duyosLEwRERHq2bOnjh8/Xta3AwAAyiGvhp3nn39er732miZOnKgtW7bo+eef15gxYzRhwgRnnzFjxmj8+PGaPHmyVq9ereDgYCUlJenUqVPOPl27dtWmTZu0aNEizZ07VytWrFDv3r29cUsAAKCc8fXmxb/66iu1b99eycnJkqT4+Hi99957WrNmjaQzszrjxo3TU089pfbt20uSpk+frqioKM2ZM0ddunTRli1blJmZqbVr16pp06aSpAkTJqhdu3Z68cUXFRMT452bAwAA5YJXZ3ZuuukmLVmyRNu2bZMkbdy4UV9++aXuuOMOSdKuXbuUlZWlxMRE52vCw8PVrFkzrVq1SpK0atUqRUREOIOOJCUmJsrHx0erV68uw7sBAADlkVdndh5//HHl5uaqXr16qlSpkgoLCzVq1Ch17dpVkpSVlSVJioqKcnldVFSU81hWVpYiIyNdjvv6+qpq1arOPufKy8tTXl6ecz83N9dj9wQAAMoXr87szJo1SzNmzNC7776rb7/9VtOmTdOLL76oadOmlep1MzIyFB4e7txiY2NL9XoAAMB7vBp2HnvsMT3++OPq0qWLGjdurG7dumnAgAHKyMiQJEVHR0uSsrOzXV6XnZ3tPBYdHa1Dhw65HC8oKNCRI0ecfc41ZMgQ5eTkOLd9+/Z5+tYAAEA54dWwc/LkSfn4uJZQqVIlFRUVSZJq1aql6OhoLVmyxHk8NzdXq1evVkJCgiQpISFBR48e1bp165x9li5dqqKiIjVr1uy81w0ICFBYWJjLBgAA7OTVNTt33XWXRo0apZo1a6phw4Zav369xo4dq3/+85+SJIfDof79+2vkyJGqW7euatWqpaeffloxMTHq0KGDJKl+/fpq27atevXqpcmTJys/P1/p6enq0qULT2IBAADvhp0JEybo6aef1kMPPaRDhw4pJiZGffr00dChQ519Bg0apBMnTqh37946evSoWrZsqczMTAUGBjr7zJgxQ+np6WrdurV8fHzUsWNHjR8/3hu3BAAAyhmH+f3HFf+Pys3NVXh4uHJycjz+llb84/M8er6ysPu5ZG+XAAC4AH6v/NfF/v7mu7EAAIDVCDsAAMBqhB0AAGA1wg4AALAaYQcAAFiNsAMAAKxG2AEAAFYj7AAAAKsRdgAAgNUIOwAAwGqEHQAAYDXCDgAAsBphBwAAWI2wAwAArEbYAQAAViPsAAAAqxF2AACA1Qg7AADAaoQdAABgNcIOAACwGmEHAABYjbADAACsRtgBAABWI+wAAACrEXYAAIDVCDsAAMBqhB0AAGA1wg4AALAaYQcAAFiNsAMAAKxG2AEAAFYj7AAAAKsRdgAAgNUIOwAAwGqEHQAAYDXCDgAAsBphBwAAWI2wAwAArEbYAQAAViPsAAAAqxF2AACA1Qg7AADAaoQdAABgNcIOAACwGmEHAABYjbADAACsRtgBAABWI+wAAACrEXYAAIDVCDsAAMBqhB0AAGA1wg4AALAaYQcAAFiNsAMAAKxG2AEAAFYj7AAAAKsRdgAAgNUIOwAAwGqEHQAAYDXCDgAAsBphBwAAWI2wAwAArEbYAQAAViPsAAAAqxF2AACA1bwedn766Sfdf//9qlatmoKCgtS4cWN98803zuPGGA0dOlQ1atRQUFCQEhMTtX37dpdzHDlyRF27dlVYWJgiIiLUs2dPHT9+vKxvBQAAlENeDTu//vqrWrRoIT8/Py1YsECbN2/WSy+9pCpVqjj7jBkzRuPHj9fkyZO1evVqBQcHKykpSadOnXL26dq1qzZt2qRFixZp7ty5WrFihXr37u2NWwIAAOWMrzcv/vzzzys2NlZTpkxxttWqVcv538YYjRs3Tk899ZTat28vSZo+fbqioqI0Z84cdenSRVu2bFFmZqbWrl2rpk2bSpImTJigdu3a6cUXX1RMTEzZ3hQAAChXvDqz8+mnn6pp06b6+9//rsjISF177bV68803ncd37dqlrKwsJSYmOtvCw8PVrFkzrVq1SpK0atUqRUREOIOOJCUmJsrHx0erV68+73Xz8vKUm5vrsgEAADt5Nezs3LlTr732murWravPPvtMDz74oPr27atp06ZJkrKysiRJUVFRLq+LiopyHsvKylJkZKTLcV9fX1WtWtXZ51wZGRkKDw93brGxsZ6+NQAAUE54NewUFRXpuuuu0+jRo3Xttdeqd+/e6tWrlyZPnlyq1x0yZIhycnKc2759+0r1egAAwHu8GnZq1KihBg0auLTVr19fe/fulSRFR0dLkrKzs136ZGdnO49FR0fr0KFDLscLCgp05MgRZ59zBQQEKCwszGUDAAB28mrYadGihbZu3erStm3bNsXFxUk6s1g5OjpaS5YscR7Pzc3V6tWrlZCQIElKSEjQ0aNHtW7dOmefpUuXqqioSM2aNSuDuwAAAOWZV5/GGjBggG666SaNHj1a9957r9asWaM33nhDb7zxhiTJ4XCof//+GjlypOrWratatWrp6aefVkxMjDp06CDpzExQ27ZtnW9/5efnKz09XV26dOFJLAAA4N2wc8MNN+jjjz/WkCFDNHz4cNWqVUvjxo1T165dnX0GDRqkEydOqHfv3jp69KhatmypzMxMBQYGOvvMmDFD6enpat26tXx8fNSxY0eNHz/eG7cEAADKGYcxxni7CG/Lzc1VeHi4cnJyPL5+J/7xeR49X1nY/Vyyt0sAAFwAv1f+62J/f3v96yIAAABKE2EHAABYza2ws3PnTk/XAQAAUCrcCjt16tTRrbfeqnfeecflCzkBAADKG7fCzrfffqsmTZpo4MCBio6OVp8+fbRmzRpP1wYAAHDJ3Ao711xzjV555RUdOHBA//73v3Xw4EG1bNlSjRo10tixY3X48GFP1wkAAOCWS1qg7Ovrq3vuuUezZ8/W888/rx07dujRRx9VbGysunfvroMHD3qqTgAAALdcUtj55ptv9NBDD6lGjRoaO3asHn30Uf34449atGiRDhw4oPbt23uqTgAAALe49QnKY8eO1ZQpU7R161a1a9dO06dPV7t27eTjcyY71apVS1OnTlV8fLwnawUAACgxt8LOa6+9pn/+859KTU1VjRo1ztsn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a9eumj9/vnbs2KGHHnpI+fn5GjZsWFmUXeG4M8733Xeffv75Z7Vs2VLGGBUUFOhf//qXnnjiibIo+X/GhX4X5ubm6rffflNQUJDHr8nMDqz23HPPaebMmfr4448VGBjo7XKscezYMXXr1k1vvvmmqlev7u1yrFdUVKTIyEi98cYbuv7669W5c2c9+eSTmjx5srdLs8ry5cs1evRovfrqq/r222/10Ucfad68eRoxYoS3S8MlYmbHTdWrV1elSpWUnZ3t0p6dna3o6OjzviY6OrpE/eHeOJ/14osv6rnnntPixYvVpEmT0iyzwivpOP/444/avXu37rrrLmdbUVGRJMnX11dbt25V7dq1S7foCsqdP9M1atSQn5+fKlWq5GyrX7++srKydPr0afn7+5dqzRWRO+P89NNPq1u3bnrggQckSY0bN9aJEyfUu3dvPfnkk/LxYX7AEy70uzAsLKxUZnUkZnbc5u/vr+uvv15LlixxthUVFWnJkiVKSEg472sSEhJc+kvSokWLLtgf7o2zJI0ZM0YjRoxQZmammjZtWhalVmglHed69erp+++/14YNG5zb3XffrVtvvVUbNmxQbGxsWZZfobjzZ7pFixbasWOHM1BK0rZt21SjRg2CzgW4M84nT54sFmjOBkzD10h6jFd+F5ba0uf/ATNnzjQBAQFm6tSpZvPmzaZ3794mIiLCZGVlGWOM6datm3n88ced/VeuXGl8fX3Niy++aLZs2WKGDRvGo+cXoaTj/Nxzzxl/f3/zwQcfmIMHDzq3Y8eOeesWKoSSjvO5eBrr4pV0rPfu3WtCQ0NNenq62bp1q5k7d66JjIw0I0eO9NYtVAglHedhw4aZ0NBQ895775mdO3eahQsXmtq1a5t7773XW7dQIRw7dsysX7/erF+/3kgyY8eONevXrzd79uwxxhjz+OOPm27dujn7n330/LHHHjNbtmwxkyZN4tHz8m7ChAmmZs2axt/f39x4443m66+/dh5r1aqVSUlJcek/a9Ysc9VVVxl/f3/TsGFDM2/evDKuuGIqyTjHxcUZScW2YcOGlX3hFUxJ/zz/HmGnZEo61l999ZVp1qyZCQgIMFdeeaUZNWqUKSgoKOOqK56SjHN+fr555plnTO3atU1gYKCJjY01Dz30kPn111/LvvAKZNmyZef9N/fs2KakpJhWrVoVe80111xj/P39zZVXXmmmTJlSqjU6jGFuDgAA2Is1OwAAwGqEHQAAYDXCDgAAsBphBwAAWI2wAwAArEbYAQAAViPsAAAAqxF2AFhj6tSpioiIuOTzOBwOzZkz55LPA6B8IOwAKFdSU1PVoUMHb5cBwCKEHQAAYDXCDoAKY+zYsWrcuLGCg4MVGxurhx56SMePHy/Wb86cOapbt64CAwOVlJSkffv2uRz/5JNPdN111ykwMFBXXnmlnn32WRUUFJz3mqdPn1Z6erpq1KihwMBAxcXFKSMjo1TuD0DpIOwAqDB8fHw0fvx4bdq0SdOmTdPSpUs1aNAglz4nT57UqFGjNH36dK1cuVJHjx5Vly5dnMe/+OILde/eXf369dPmzZv1+uuva+rUqRo1atR5rzl+/Hh9+umnmjVrlrZu3aoZM2YoPj6+NG8TgIfxRaAAypXU1FQdPXr0ohYIf/DBB/rXv/6ln3/+WdKZBco9evTQ119/rWbNmkmSfvjhB9WvX1+rV6/WjTfeqMTERLVu3VpDhgxxnuedd97RoEGDdODAAUlnFih//PHH6tChg/r27atNmzZp8eLFcjgcnr9hAKWOmR0AFcbixYvVunVrXX755QoNDVW3bt30yy+/6OTJk84+vr6+uuGGG5z79erVU0REhLZs2SJJ2rhxo4YPH66QkBDn1qtXLx08eNDlPGelpqZqw4YNuvrqq9W3b18tXLiw9G8UgEcRdgBUCLt379add96pJk2a6MMPP9S6des0adIkSWfW1Vys48eP69lnn9WGDRuc2/fff6/t27crMDCwWP/rrrtOu3bt0ogRI/Tbb7/p3nvvVadOnTx2XwBKn6+3CwCAi7Fu3ToVFRXppZdeko/Pmf9PmzVrVrF+BQUF+uabb3TjjTdKkrZu3aqjR4+qfv36ks6El61bt6pOnToXfe2wsDB17txZnTt3VqdOndS2bVsdOXJEVatW9cCdAShthB0A5U5OTo42bNjg0la9enXl5+drwoQJuuuuu7Ry5UpNnjy52Gv9/Pz08MMPa/z48fL19VV6erqaN2/uDD9Dhw7VnXfeqZo1a6pTp07y8fHRxo0b9Z///EcjR44sdr6xY8eqRo0auvbaa+Xj46PZs2crOjraIx9eCKBs8DYWgHJn+fLluvbaa122t99+W2PHjtXzzz+vRo0aacaMGed9BLxy5coaPHiw7rvvPrVo0UIhISF6//33nceTkpI0d+5cLVy4UDfccIOaN2+ul19+WXFxceetJTQ0VGPGjFHTpk11ww03aPfu3Zo/f75zdglA+cfTWAAAwGr8rwkAALAaYQcAAFiNsAMAAKxG2AEAAFYj7AAAAKsRdgAAgNUIOwAAwGqEHQAAYDXCDgAAsBphBwAAWI2wAwAArEbYAQAAVvv/k2i5fC9fr2UAAAAASUVORK5CYII=\n"
-          },
-          "metadata": {}
-        }
-      ]
-    },
-    {
-      "cell_type": "code",
-      "source": [
-        "from sklearn.model_selection import train_test_split\n",
-        "from sklearn.linear_model import LogisticRegression\n",
-        "from sklearn.metrics import accuracy_score, classification_report\n",
-        "from sklearn.feature_extraction.text import CountVectorizer"
-      ],
-      "metadata": {
-        "id": "BPHiBiKqw0c6"
+        "id": "4vvB5hGTUWTy"
       },
       "execution_count": null,
       "outputs": []
@@ -278,68 +241,24 @@
     {
       "cell_type": "code",
       "source": [
-        "vectorizer = CountVectorizer()\n",
-        "x_vectorized = vectorizer.fit_transform(x)"
-      ],
-      "metadata": {
-        "id": "Dz_U2P_k8G0T"
-      },
-      "execution_count": null,
-      "outputs": []
-    },
-    {
-      "cell_type": "code",
-      "source": [
-        "# Splitting the data into training and testing sets\n",
-        "X_train, X_test, y_train, y_test = train_test_split(x_vectorized, y, test_size=0.2, random_state=42)"
-      ],
-      "metadata": {
-        "id": "5wG0Kcxlw3px"
-      },
-      "execution_count": null,
-      "outputs": []
-    },
-    {
-      "cell_type": "code",
-      "source": [
-        "# Initialize the logistic regression classifier\n",
-        "model = LogisticRegression(solver='liblinear')\n",
+        "# RF Model\n",
+        "rf_modelWithoob = RandomForestRegressor(random_state=42, oob_score=True)\n",
         "\n",
-        "# Fit the logistic regression model\n",
-        "model.fit(x_vectorized, y)"
+        "# RF model fit with OOB\n",
+        "rf_modelWithoob.fit(X_train, y_train)\n",
+        "\n",
+        "# Evaluate OOB score\n",
+        "print('OOB R2 score:', rf_modelWithoob.oob_score_)\n",
+        "print('OOB MSE score:', mean_squared_error(y_train, rf_modelWithoob.oob_prediction_))\n",
+        "\n",
+        "# Obtain feature importances and plot them\n",
+        "importances = pd.Series(rf_modelWithoob.feature_importances_, index=X.columns)\n",
+        "print(importances)\n",
+        "importances.plot(kind='barh')\n",
+        "plt.show()"
       ],
       "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/",
-          "height": 75
-        },
-        "id": "B-FcNF6JxK10",
-        "outputId": "998537a9-e536-4d09-eed7-4b4fc819b770"
-      },
-      "execution_count": null,
-      "outputs": [
-        {
-          "output_type": "execute_result",
-          "data": {
-            "text/plain": [
-              "LogisticRegression(solver='liblinear')"
-            ],
-            "text/html": [
-              "<style>#sk-container-id-7 {color: black;background-color: white;}#sk-container-id-7 pre{padding: 0;}#sk-container-id-7 div.sk-toggleable {background-color: white;}#sk-container-id-7 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-7 label.sk-toggleable__label-arrow:before {content: \"▸\";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-7 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-7 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-7 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-7 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-7 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-7 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: \"▾\";}#sk-container-id-7 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-7 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-7 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-7 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-7 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-7 div.sk-parallel-item::after {content: \"\";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-7 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-7 div.sk-serial::before {content: \"\";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-7 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-7 div.sk-item {position: relative;z-index: 1;}#sk-container-id-7 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-7 div.sk-item::before, #sk-container-id-7 div.sk-parallel-item::before {content: \"\";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-7 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-7 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-7 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-7 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-7 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-7 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-7 div.sk-label-container {text-align: center;}#sk-container-id-7 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-7 div.sk-text-repr-fallback {display: none;}</style><div id=\"sk-container-id-7\" class=\"sk-top-container\"><div class=\"sk-text-repr-fallback\"><pre>LogisticRegression(solver=&#x27;liblinear&#x27;)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class=\"sk-container\" hidden><div class=\"sk-item\"><div class=\"sk-estimator sk-toggleable\"><input class=\"sk-toggleable__control sk-hidden--visually\" id=\"sk-estimator-id-7\" type=\"checkbox\" checked><label for=\"sk-estimator-id-7\" class=\"sk-toggleable__label sk-toggleable__label-arrow\">LogisticRegression</label><div class=\"sk-toggleable__content\"><pre>LogisticRegression(solver=&#x27;liblinear&#x27;)</pre></div></div></div></div></div>"
-            ]
-          },
-          "metadata": {},
-          "execution_count": 67
-        }
-      ]
-    },
-    {
-      "cell_type": "code",
-      "source": [
-        "y_pred = model.predict(X_test)"
-      ],
-      "metadata": {
-        "id": "exIuEphTxXHE"
+        "id": "8LQE7GFhUbJT"
       },
       "execution_count": null,
       "outputs": []
@@ -347,66 +266,13 @@
     {
       "cell_type": "code",
       "source": [
-        "accuracy = accuracy_score(y_test, y_pred)\n",
-        "print(\"Accuracy:\", accuracy)"
+        "param_grid = {\n",
+        "    'n_estimators': [5, 10, 15, 20]\n",
+        "    #,'max_depth': [None, 2, 5, 10], 'min_samples_split': [2, 5, 10], 'min_samples_leaf': [1, 2, 4], 'max_features': ['auto', 'sqrt', 'log2']\n",
+        "}"
       ],
       "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/"
-        },
-        "id": "klSsEG5VxswT",
-        "outputId": "fd3c5531-9be2-49a7-f217-ac7d99081a30"
-      },
-      "execution_count": null,
-      "outputs": [
-        {
-          "output_type": "stream",
-          "name": "stdout",
-          "text": [
-            "Accuracy: 0.9701897018970189\n"
-          ]
-        }
-      ]
-    },
-    {
-      "cell_type": "code",
-      "source": [
-        "print(classification_report(y_test, y_pred))"
-      ],
-      "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/"
-        },
-        "id": "jKeX1V71xyd_",
-        "outputId": "0cf1cfa6-2189-4980-d60d-d66a4d171181"
-      },
-      "execution_count": null,
-      "outputs": [
-        {
-          "output_type": "stream",
-          "name": "stdout",
-          "text": [
-            "              precision    recall  f1-score   support\n",
-            "\n",
-            "         0.0       0.97      0.97      0.97       173\n",
-            "         1.0       0.97      0.97      0.97       196\n",
-            "\n",
-            "    accuracy                           0.97       369\n",
-            "   macro avg       0.97      0.97      0.97       369\n",
-            "weighted avg       0.97      0.97      0.97       369\n",
-            "\n"
-          ]
-        }
-      ]
-    },
-    {
-      "cell_type": "code",
-      "source": [
-        "feature_names = vectorizer.vocabulary_.keys()\n",
-        "odds_ratios = np.exp(model.coef_)"
-      ],
-      "metadata": {
-        "id": "zW6p5lop9Eew"
+        "id": "ffyKP-OaUiMA"
       },
       "execution_count": null,
       "outputs": []
@@ -414,10 +280,12 @@
     {
       "cell_type": "code",
       "source": [
-        "odds_ratios_df = pd.DataFrame(odds_ratios, columns=feature_names, index=['Odds Ratio'])"
+        "scoring = {'R2': 'r2', 'MSE': 'neg_mean_squared_error'}\n",
+        "print(scoring)\n",
+        "\n"
       ],
       "metadata": {
-        "id": "y1b7CBER90Ep"
+        "id": "SpLsSAZ3Umaf"
       },
       "execution_count": null,
       "outputs": []
@@ -425,37 +293,193 @@
     {
       "cell_type": "code",
       "source": [
-        "print(odds_ratios_df)"
+        "grid_search = GridSearchCV(rf_model, param_grid=param_grid, cv=5, scoring=scoring, refit='R2')\n",
+        "grid_search.fit(X_train, y_train)"
       ],
       "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/"
-        },
-        "id": "HZsmDPQq-LUE",
-        "outputId": "078a7844-8178-408f-9015-236431472994"
+        "id": "_5Oipe6fUqTU"
       },
       "execution_count": null,
-      "outputs": [
-        {
-          "output_type": "stream",
-          "name": "stdout",
-          "text": [
-            "                 all  immigrants      must        be    booted       out  \\\n",
-            "Odds Ratio  0.934368    0.998121  1.041216  1.018424  0.862471  0.943255   \n",
-            "\n",
-            "            romanians  bulgarians  pakistanis        go  ...    dealer  \\\n",
-            "Odds Ratio    0.93117    1.627121    1.148186  1.235912  ...  0.871357   \n",
-            "\n",
-            "             program    wallet  reviewing      fail   applaud  misinformation  \\\n",
-            "Odds Ratio  0.641807  1.014765   1.414984  0.854984  1.207438        0.811031   \n",
-            "\n",
-            "            royalty  eagerness   concede  \n",
-            "Odds Ratio  1.00415   0.883732  1.000274  \n",
-            "\n",
-            "[1 rows x 6714 columns]\n"
-          ]
-        }
-      ]
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "y_pred = grid_search.predict(X_test)\n",
+        "print('Test R2 score:', r2_score(y_test, y_pred))\n",
+        "print('Test MSE score:', mean_squared_error(y_test, y_pred))"
+      ],
+      "metadata": {
+        "id": "S4UoLaM5Uuo4"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print('Best hyperparameters:', grid_search.best_params_)\n",
+        "print('Best R2 score:', grid_search.best_score_)\n",
+        "print('Best MSE score:', abs(grid_search.cv_results_['mean_test_MSE'][grid_search.best_index_]))"
+      ],
+      "metadata": {
+        "id": "8CObMxW2UzIy"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "importances = pd.Series(grid_search.best_estimator_.feature_importances_, index=X.columns)\n",
+        "print(importances)\n",
+        "importances.plot(kind='barh')\n",
+        "plt.show()"
+      ],
+      "metadata": {
+        "id": "RXEkb6urU2fF"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sklearn.tree import plot_tree\n",
+        "\n",
+        "fig, ax = plt.subplots(figsize=(16, 8))\n",
+        "plot_tree(grid_search.best_estimator_[0], ax=ax, feature_names=X_train.columns)\n",
+        "plt.show()"
+      ],
+      "metadata": {
+        "id": "ZokRyoeBU65e"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Perform grid search with cross-validation\n",
+        "grid_search = GridSearchCV(rf_modelWithoob, param_grid=param_grid, cv=5, scoring=scoring, refit='R2')\n",
+        "grid_search.fit(X_train, y_train)\n",
+        "\n",
+        "# Evaluate model on test set\n",
+        "y_pred = grid_search.predict(X_test)\n",
+        "print('Test R2 score:', r2_score(y_test, y_pred))\n",
+        "print('Test MSE score:', mean_squared_error(y_test, y_pred))\n",
+        "print('\\n')\n",
+        "\n",
+        "# Display best hyperparameters and corresponding R2 and MSE scores\n",
+        "print('Best hyperparameters:', grid_search.best_params_)\n",
+        "print('Best R2 score:', grid_search.best_score_)\n",
+        "print('Best MSE score:', abs(grid_search.cv_results_['mean_test_MSE'][grid_search.best_index_]))\n",
+        "print('\\n')\n",
+        "\n",
+        "# Display OOB score and related statistics\n",
+        "print('OOB score:', grid_search.best_estimator_.oob_score_)\n",
+        "oob_predictions = grid_search.best_estimator_.oob_prediction_\n",
+        "print('OOB MSE score:', mean_squared_error(y_train, oob_predictions))\n",
+        "print('OOB R2 score:', r2_score(y_train, oob_predictions))\n",
+        "print('\\n')\n",
+        "\n",
+        "# Obtain feature importances and plot them\n",
+        "importances_oob = pd.Series(grid_search.best_estimator_.feature_importances_, index=X.columns)\n",
+        "print('Feature importances based on OOB:')\n",
+        "print(importances_oob)\n",
+        "importances_oob.plot(kind='barh')\n",
+        "plt.show()\n",
+        "\n",
+        "# Display the decision tree\n",
+        "from sklearn.tree import plot_tree\n",
+        "fig, ax = plt.subplots(figsize=(16, 8))\n",
+        "plot_tree(grid_search.best_estimator_[0], ax=ax, feature_names=X_train.columns)\n",
+        "plt.show()"
+      ],
+      "metadata": {
+        "id": "SVeO6n2mVISJ"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sklearn.model_selection import RandomizedSearchCV\n",
+        "import numpy as np\n",
+        "\n",
+        "# Perform random search with cross-validation; hence, create random search object\n",
+        "random_search = RandomizedSearchCV(rf_model, param_distributions=param_grid, n_iter=20, cv=5, scoring=scoring, refit='R2')\n",
+        "\n",
+        "# fit the random search object to the train data\n",
+        "random_search.fit(X_train, y_train)\n",
+        "\n",
+        "# Display best hyperparameters and corresponding R2 and MSE scores\n",
+        "print('Best hyperparameters:', random_search.best_params_)\n",
+        "print('Best R2 score:', random_search.best_score_)\n",
+        "print('Best MSE score:', abs(random_search.cv_results_['mean_test_MSE'][random_search.best_index_]))\n",
+        "print('\\n')\n",
+        "\n",
+        "# fit the model with the best parameters on the entire training set\n",
+        "best_model = random_search.best_estimator_\n",
+        "best_model.fit(X_train, y_train)\n",
+        "\n",
+        "# evaluate the best model on the test set\n",
+        "y_pred = best_model.predict(X_test)\n",
+        "print(\"Test R2 score:\", r2_score(y_test, y_pred))\n",
+        "print(\"Test MSE score:\", mean_squared_error(y_test, y_pred))\n",
+        "print('\\n')\n",
+        "\n",
+        "# Obtain feature importances and plot them\n",
+        "importances = pd.Series(random_search.best_estimator_.feature_importances_, index=X.columns)\n",
+        "print('Feature importances:')\n",
+        "print(importances)\n",
+        "importances.plot(kind='barh')\n",
+        "plt.show()\n",
+        "\n",
+        "# Display the decision tree\n",
+        "from sklearn.tree import plot_tree\n",
+        "fig, ax = plt.subplots(figsize=(16, 8))\n",
+        "plot_tree(random_search.best_estimator_[0], ax=ax, feature_names=X_train.columns)\n",
+        "plt.show()"
+      ],
+      "metadata": {
+        "id": "CEa2iPMQWL-G"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "param_grid = {\n",
+        "    'n_estimators': [5, 10, 15, 20],\n",
+        "    'max_depth': [None, 2, 5, 10],\n",
+        "    'min_samples_split': [2, 5, 10],\n",
+        "    'min_samples_leaf': [1, 2, 4],\n",
+        "    'max_features': ['auto', 'sqrt', 'log2']\n",
+        "}"
+      ],
+      "metadata": {
+        "id": "hpTUD9cLWjwe"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sklearn.tree import plot_tree\n",
+        "\n",
+        "fig, ax = plt.subplots(figsize=(16, 8))\n",
+        "plot_tree(grid_search.best_estimator_[0], ax=ax, feature_names=X_train.columns)\n",
+        "plt.show()"
+      ],
+      "metadata": {
+        "id": "rVHowWhRWyKA"
+      },
+      "execution_count": null,
+      "outputs": []
     }
   ]
 }
